@@ -23,11 +23,14 @@ feature -- Access
 			-- All relations by referee.
 		require
 			a_referee_not_void: a_referee /= Void
+		local
+			l_result: detachable like references_by_referee
 		do
-			Result := relations.item (a_referee)
-			if Result = Void then
-				create Result.make (0)
+			l_result := relations.item (a_referee)
+			if l_result = Void then
+				create l_result.make (0)
 			end
+			Result := l_result
 		ensure
 			Result_not_void: Result /= Void
 		end
@@ -82,10 +85,11 @@ feature -- Removal
 			a_referrer_not_void: a_referrer /= Void
 			a_referee_not_void: a_referee /= Void
 		local
-			l_hash: like references_by_referee
+			l_hash: detachable like references_by_referee
 		do
 			if relations.has_key (a_referee) then
 				l_hash := relations.found_item
+				check l_hash /= Void end -- Implied by `has_key'
 				l_hash.remove (a_referrer)
 				if l_hash.is_empty then
 					relations.remove (a_referee)

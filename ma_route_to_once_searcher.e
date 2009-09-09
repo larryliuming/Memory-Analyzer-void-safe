@@ -192,7 +192,7 @@ feature {NONE} -- Results
 			i, j, l_column_count, l_row_count, l_column_selected_count: INTEGER
 			l_column: EV_GRID_COLUMN
 			l_row: EV_GRID_ROW
-			l_text_item: EV_GRID_LABEL_ITEM
+			l_text_item: detachable EV_GRID_LABEL_ITEM
 			l_text: STRING_32
 			l_states: SPECIAL [INTEGER]
 			l_none, l_part, l_full: INTEGER
@@ -269,8 +269,12 @@ feature {NONE} -- Results
 				end
 				i := i + 1
 			end
-			clipboard := (create {EV_ENVIRONMENT}).application.clipboard
-			clipboard.set_text (l_text)
+			if attached (create {EV_ENVIRONMENT}).application as l_app then
+				clipboard := l_app.clipboard
+				clipboard.set_text (l_text)
+			else
+				check False end -- Implied by application is running
+			end
 		end
 
 feature {NONE} -- Implementation
@@ -296,10 +300,10 @@ feature {NONE} -- Implementation
 	snapshot_mediator: MA_OBJECT_SNAPSHOT_MEDIATOR
 			-- Snapshot mediator
 
-	name_table: HASH_TABLE [STRING, like start_index]
+	name_table: detachable HASH_TABLE [STRING, like start_index]
 			-- Names of type of objects
 
-	reference_table: MA_REFERENCES_TABLE [like start_index, like start_index]
+	reference_table: detachable MA_REFERENCES_TABLE [like start_index, like start_index]
 			-- All object relations
 
 	once_objects_table: HASH_TABLE [like start_index, like start_index]
