@@ -57,13 +57,15 @@ feature -- Commands
 feature {NONE} -- Results
 
 	result_panel: EV_FRAME
-		-- Panel to put result grid
+			-- Panel to put result grid
 
 	grid: EV_GRID
-		-- Result grid
+			-- Result grid
 
 	fill_results
-			--
+			-- Fill result
+		require
+			ready: attached reference_table
 		local
 			l_array: LIST [like start_index]
 			l_item: EV_GRID_LABEL_ITEM
@@ -365,6 +367,8 @@ feature {NONE} -- Implementation
 	remove_last_link_to_once
 			-- Remove last found link to once in `reference_table'.
 			-- So that next searching will not return found routes anymore.
+		require
+			ready: attached reference_table
 		local
 			l_referrer, l_referee: like start_index
 			l_route: ARRAYED_LIST [like start_index]
@@ -373,7 +377,11 @@ feature {NONE} -- Implementation
 				l_route := route_stack.linear_representation
 				l_referrer := l_route [1]
 				l_referee := l_route [2]
-				reference_table.remove (l_referrer, l_referee)
+				if attached reference_table as l_table then
+					l_table.remove (l_referrer, l_referee)
+				else
+					check False end -- Implied by precondition `ready'
+				end
 			end
 		end
 
