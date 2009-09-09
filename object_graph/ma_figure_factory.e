@@ -31,7 +31,7 @@ feature -- Basic operations
 			Result := create {MA_REFERENCE_LINK}.make_with_model (a_link)
 		end
 
-	model_from_xml (node: like xml_element_type): EG_ITEM
+	model_from_xml (node: attached like xml_element_type): EG_ITEM
 			-- Create an EG_ITEM from `node' if possible.
 --		local
 --			node_name, source_name, target_name: STRING
